@@ -1,0 +1,163 @@
+                                 Advantages of adding extra servers
+Having a distributed infrastructure with multiple servers offers several advantages over a single server web infrastructure. Here are some key benefits:
+
+(1) High availability: With multiple servers, you can distribute the workload across them and implement redundancy. If one server fails or experiences issues, the load balancer can route traffic to the remaining servers, ensuring your website or application remains available to users. This improves reliability and minimizes downtime.
+
+(2) Scalability: Distributed infrastructure allows you to scale your application horizontally by adding more servers. As your traffic and user base grow, you can simply add additional servers to handle the increased load. Load balancers distribute incoming requests evenly across the servers, optimizing resource utilization and ensuring efficient scalability.
+
+(3) Improved performance: By distributing the workload across multiple servers, you can handle a larger number of concurrent requests and serve content faster. This reduces response times and improves overall performance for users. Additionally, by placing servers closer to different geographic regions, you can reduce latency and provide a better user experience.
+
+(4) Enhanced security: With a distributed infrastructure, you can implement security measures such as firewalls, intrusion detection systems, and load balancer filters at multiple points in the network. This provides an added layer of protection against cyber threats and improves the overall security posture of your system.
+
+(5) Flexibility and fault tolerance: With multiple servers, you have the flexibility to perform maintenance or updates on one server without impacting the availability of your application. Additionally, if a server experiences a hardware failure or other issues, the load balancer can route traffic to the remaining servers, ensuring fault tolerance and uninterrupted service.
+
+(6) Load balancing: The load balancer distributes incoming requests across the servers based on predefined algorithms (e.g., round-robin, least connections, etc.). This helps evenly distribute the workload, prevents overload on a single server, and optimizes resource utilization.
+
+(7) Easy scaling and resource allocation: When you need to scale your infrastructure further, adding additional servers to the pool is relatively straightforward. Load balancers can automatically detect new servers and include them in the rotation. Similarly, resources such as CPU, memory, and storage can be allocated and balanced across the servers as needed.
+
+A distributed infrastructure with multiple servers and a load balancer provides improved availability, scalability, performance, security, fault tolerance, and flexibility compared to a single server web infrastructure. It allows you to handle larger workloads, better serve your users, and ensure continuous operation even during server failures or maintenance.
+
+Load balancer algorithims
+What is a load balancer and how does it work?
+
+A load balancer is a device or software component that acts as an intermediary between clients (users or other systems) and a group of backend servers. Its primary function is to distribute incoming network traffic across multiple servers to ensure efficient utilization of resources and improve the performance, availability, and reliability of a system or application.
+
+Load balancer algorithms determine how incoming requests are distributed across multiple servers in a distributed infrastructure. Each algorithm has its own approach to load balancing and offers different advantages depending on the specific requirements of the system. Here are some commonly used load balancer algorithms:
+
+(1) Round Robin
+
+(2) Least Connections
+
+(3) IP Hash
+
+(4) Least Response Time
+
+(5) Weighted Round Robin
+
+(6) Random
+
+Since our web infrastructure design is making use of round robin load balancer algorithm, lets explore how it operates
+
+Round Robin load balancer algorithm is a simple and widely used approach for distributing incoming requests across multiple servers in a load balancing setup. It aims to evenly distribute the traffic load among the available servers in a cyclic manner.
+
+Here's how it works:
+
+The algorithm starts with a list of backend servers that are participating in the load balancing. The servers can be in any order initially.
+
+When a new request arrives, the Round Robin algorithm forwards the request to the next server in line according to the predetermined order. For example, if the servers are listed as A, B, and C, the first request will go to server A, the second request to server B, the third request to server C, and so on.
+
+After each request is processed, the algorithm moves to the next server in the list. When it reaches the end of the list, it starts again from the beginning, creating a cyclic rotation. This ensures that requests are evenly distributed across all servers in a circular fashion.
+
+Round Robin load balancing aims to provide fairness by giving each server an equal opportunity to handle incoming requests. As long as all servers have similar capabilities and resources, the algorithm distributes the load evenly among them.
+
+The Round Robin algorithm is stateless, meaning it does not consider the current load or performance of the servers. It treats all servers equally and assumes that each server can handle the same amount of traffic.
+
+Points to note
+
+Round Robin load balancing doesn't take into account factors such as server health, response time, or capacity. If the servers in the pool have different capabilities or if their workload varies, Round Robin may not provide optimal load distribution. In such cases, other load balancing algorithms, like weighted round robin or least connections, might be more suitable.
+
+Round Robin load balancing is relatively simple to implement and can be an effective approach for evenly distributing traffic across multiple servers. However, its effectiveness depends on the characteristics and demands of the system, and it may not be the best choice in all scenarios.
+
+Active-active or Active-passive system?
+Here's an explanation of the difference between the two:
+
+(1) Active-Active setup: In an Active-Active setup, all servers in the load balancing pool are actively serving traffic and processing requests simultaneously. The load balancer evenly distributes incoming requests across all active servers, and each server handles its share of the load independently. This setup allows for parallel processing and scalability since multiple servers are actively handling traffic at the same time. If one server fails or becomes unavailable, the other active servers continue to handle the requests, ensuring high availability.
+
+(2) Active-Passive setup: In an Active-Passive setup, there is a primary or active server that actively serves traffic and processes requests, while the other servers remain in a passive or standby state. The load balancer directs all incoming requests to the active server, and it handles the entire workload. The passive servers are there as backups, ready to take over if the active server fails. In this setup, the passive servers typically remain idle, only becoming active when the primary server goes down. The failover process involves the load balancer detecting the failure and redirecting traffic to the passive server(s) to ensure continuity of service.
+
+--- The choice between an Active-Active or Active-Passive setup depends on the specific requirements and goals of your system.
+
+--- Active-Active setups provide better scalability, as multiple servers share the load simultaneously, but they require more complex synchronization and coordination between servers.
+
+--- Active-Passive setups are simpler to implement and manage but may have slightly higher response times during failover events since the passive server(s) need to take over the workload.
+
+Database primary-replica
+A database primary-replica (master-slave) cluster is a common architecture for achieving high availability and data redundancy in database systems. It involves having one primary/master node and one or more replica/slave nodes. Here's an overview of how a primary-replica cluster works:
+
+Initially, the replica nodes are synchronized with the primary node to have an identical copy of the database. This synchronization can be done through an initial data backup and restoration or by using database replication mechanisms such as log shipping or streaming replication.
+
+The primary node serves as the main read-write node in the cluster. All write operations (such as INSERT, UPDATE, DELETE) are directed to the primary node. It handles the incoming write requests, applies the changes to its local database, and generates a log of these modifications.
+
+The replica nodes continuously replicate the changes made on the primary node to keep their data up to date. There are different replication mechanisms depending on the database system, such as asynchronous or synchronous replication. In asynchronous replication, the primary node sends the changes to the replica nodes without waiting for their acknowledgement, while in synchronous replication, the primary node waits for acknowledgement from replica nodes before considering a transaction committed.
+
+Read operations (such as SELECT queries) can be performed on both the primary and replica nodes. However, in most cases, read operations are offloaded to the replica nodes to reduce the read load on the primary node and improve overall performance. Clients or applications can connect to any replica node for read operations.
+
+If the primary node fails or becomes unavailable, a failover mechanism is triggered to ensure high availability. The failover process involves promoting one of the replica nodes to become the new primary node. This can be an automated process managed by the cluster software or may require manual intervention. Once the failover is complete, the new primary node resumes handling both read and write operations, and the remaining replica nodes synchronize with the new primary node to catch up with any missed changes.
+
+To maintain data consistency, the primary node ensures that all replica nodes have applied the changes before considering a transaction committed. This ensures that data modifications are propagated to all replicas, and clients can read consistent data from any replica.
+
+--- By using a primary-replica cluster, the database system gains fault tolerance and high availability. If the primary node fails, one of the replica nodes takes over seamlessly, minimizing downtime and ensuring continued operations. Additionally, read scalability is improved by offloading read operations to the replica nodes, allowing for better performance and distributed workload.
+
+Difference between Primary node and Replica node
+Primary node
+(1) Read-write operations: The primary node serves as the main read-write node in the cluster. It handles all write operations, such as INSERT, UPDATE, and DELETE, coming from client applications or users.
+
+(2) Data modification authority: The primary node has the authority to make changes to the database. It is responsible for applying the changes locally and generating a log of these modifications.
+
+(3) Data synchronization: The primary node sends the changes made to the database to the replica nodes for synchronization. It replicates its modifications to the replica nodes to keep them up to date.
+
+(4) Failover: In the event of a primary node failure, a failover process is triggered to promote one of the replica nodes to become the new primary node. The primary node may have additional responsibilities, such as managing failover and coordinating the cluster.
+
+Replica Node
+(1) Read operations: The replica nodes are primarily responsible for serving read operations, such as SELECT queries, from client applications or users. They can handle read requests independently and provide scalability by offloading the read load from the primary node.
+
+(2) Data synchronization: The replica nodes continuously replicate the changes made on the primary node to maintain an identical copy of the database. They receive and apply the modifications sent by the primary node, ensuring data consistency across the cluster.
+
+(3) Fault tolerance: Replica nodes provide fault tolerance by acting as backups for the primary node. If the primary node fails, one of the replica nodes can be promoted to become the new primary node, ensuring the continuity of operations.
+
+(4) Redundancy and data availability: Replica nodes provide data redundancy and improve the availability of the database. If one replica node fails, other replica nodes can still serve read requests and maintain the integrity of the data.
+
+--- The primary node is responsible for handling write operations, applying changes to the database, and coordinating the cluster.
+
+--- Replica nodes serve read operations, replicate changes from the primary node, and act as backups to ensure fault tolerance and data redundancy.
+
+SPOF
+If the load balancer itself becomes a single point of failure, it can impact the entire infrastructure. If the load balancer fails, incoming traffic cannot be distributed among the servers, and the system may become inaccessible. To mitigate this risk, it is common to use high availability configurations for load balancers, such as having redundant load balancers with failover mechanisms.
+
+Network infrastructure, including switches, routers, and network links, can introduce SPOFs. If a critical network component fails or there is a network connectivity issue, it can disrupt communication between the servers, load balancer, and clients. Redundant network equipment, diverse network paths, and fault-tolerant network configurations can help minimize the impact of network-related SPOFs.
+
+Power supply failures or hardware issues in the servers can also introduce SPOFs. If all the servers are connected to a single power source or if the hardware components are not redundant, a failure in these areas can result in system downtime. Utilizing multiple power sources, backup power systems, and redundant hardware configurations can help mitigate such risks.
+
+Security
+Each server within the infrastructure should undergo a hardening process to secure the operating system, applications, and services running on them. This involves applying security patches, disabling unnecessary services, using strong authentication mechanisms, and implementing access controls to reduce the attack surface.
+
+Network security measures should be implemented to protect communication between servers, clients, and the load balancer. This includes using firewalls, intrusion detection and prevention systems (IDPS), virtual private networks (VPNs), and secure protocols (e.g., SSL/TLS) to encrypt data transmission and prevent unauthorized access.
+
+Implement robust access controls to limit access to the servers and associated resources. This involves using strong passwords or passphrase policies, enforcing multi-factor authentication (MFA), and managing user permissions and privileges effectively. Regularly review and update access control policies to maintain security.
+
+Ensure sensitive data is appropriately protected. Use encryption techniques to safeguard data at rest and in transit. Implement secure coding practices and input validation mechanisms to prevent common web application vulnerabilities such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF).
+
+Employ security monitoring and logging mechanisms to detect and respond to security incidents effectively. Monitor system logs, network traffic, and application logs for suspicious activities. Utilize intrusion detection systems (IDS) or security information and event management (SIEM) solutions to identify potential threats and respond to them promptly.
+
+Regular Updates and Patching - Keep all software, including the operating system, web server, database, and other applications, up to date with the latest security patches. Regularly apply security updates and patches to address vulnerabilities and protect against known threats.
+
+Conduct regular security audits and penetration testing to assess the infrastructure's security posture. Perform vulnerability scans and penetration tests to identify potential weaknesses and address them before they can be exploited by malicious actors.
+
+Educate employees and system administrators about security best practices, such as strong password management, social engineering awareness, and safe browsing habits. Foster a security-conscious culture within the organization.
+
+--- It is important to note that security is a continuous process, and it requires ongoing monitoring, updating, and improvement. Regularly assess the security of the infrastructure, stay informed about emerging threats, and adapt security measures accordingly to ensure a robust and secure web infrastructure.
+
+Monitoring
+Monitoring is a crucial aspect of managing a web infrastructure, as it allows you to observe the health, performance, and availability of the system's components.
+
+Here are some key considerations for monitoring a web infrastructure:
+
+Monitor the servers, load balancer, and networking components to ensure they are functioning properly. This includes monitoring CPU and memory usage, disk space, network connectivity, and hardware health. Utilize monitoring tools and services that can provide real-time alerts or notifications when issues are detected.
+
+Monitor the performance and availability of the web applications running on the servers. Track response times, throughput, error rates, and resource utilization to identify performance bottlenecks or application-specific issues. Monitor key application metrics and set up alerts for abnormal behavior or errors.
+
+Monitor the resource utilization of the servers, such as CPU, memory, disk I/O, and network bandwidth. Tracking resource usage helps identify potential performance issues, capacity constraints, or resource-intensive processes that may impact the overall system performance.
+
+Monitor the load balancer to ensure it is functioning correctly and efficiently distributing the traffic. Monitor metrics like request throughput, latency, and error rates. Additionally, monitor the health and availability of backend servers to ensure they are properly responding to requests.
+
+Collect and analyze logs from servers, load balancer, and applications to gain insights into system behavior, detect errors, and identify security incidents. Implement a centralized log management solution and set up alerts or automated analysis to identify patterns or anomalies in log data.
+
+Continuously monitor the availability and uptime of the servers and web applications. Utilize uptime monitoring tools or services to check if the servers or applications are accessible from different locations and receive notifications in case of downtime.
+
+Monitor performance metrics like response time, page load time, and transaction times to identify performance bottlenecks and optimize system performance. Track these metrics over time to identify trends and make data-driven decisions for infrastructure optimization.
+
+Monitor resource utilization trends and plan for future scalability and capacity needs based on the growth of the system. Monitor metrics like CPU, memory, and disk usage to anticipate when additional resources or infrastructure expansion may be required.
+
+Implement security monitoring tools or services to detect and respond to security incidents. Monitor for unauthorized access attempts, abnormal traffic patterns, or suspicious activities that may indicate a security breach.
+
+--- By implementing comprehensive monitoring practices, you can proactively identify and address issues, ensure optimal performance and availability, and improve the overall reliability and security of your 3-server web infrastructure.
